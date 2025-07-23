@@ -40,13 +40,23 @@ export interface FileJSON {
     uploadedAt: Date
 }
 
+export interface FileValidationResult {
+    valid: boolean
+    error?: string
+    hash?: string
+    scanResult?: {
+        clean: boolean
+        threats?: string[]
+    }
+}
+
 export interface VeloxFile extends FileJSON {
     data: Buffer
     mv: (path: string, callback: (err?: Error) => void) => void
-    save: (path: string) => Promise<{ path: string; hash?: string }>
+    save: (path: string) => Promise<{ path: string; hash?: string; url?: string }>
     toJSON: () => FileJSON
     stream: () => Readable
-    validate: () => Promise<{ valid: boolean; error?: string }>
+    validate: () => Promise<FileValidationResult>
 }
 
 export interface RequestBody {
