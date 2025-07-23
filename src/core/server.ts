@@ -153,7 +153,7 @@ export class VeloxServer extends EventEmitter {
 
         return new Promise((resolve, reject) => {
             this.server!.listen(this.port, this.host, () => {
-                this.logger.info(`🚀 VELOX Server running on http://${this.host}:${this.port}`)
+                this.logger.info(`🚀 Velox Server running on http://${this.host}:${this.port}`)
                 this.logger.info(`📁 Upload Directory: ${this.uploadDir}`)
                 this.logger.info(`🔒 Security Level: ${this.isProduction ? "PRODUCTION" : "DEVELOPMENT"}`)
                 this.logger.info(`⚡ Environment: ${process.env.NODE_ENV || "development"}`)
