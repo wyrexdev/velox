@@ -9,6 +9,13 @@ import { FILE_SIGNATURES } from "@/config/security"
 import { InputSanitizer } from "@/utils/sanitizer"
 import { v4 as uuidv4 } from "uuid"
 
+export type FileValidationResult = {
+    valid: boolean
+    error?: string
+    hash?: string
+    scanResult?: any
+}
+
 export class FileHandler {
     private config: SecurityConfig
     private uploadDir: string
@@ -73,7 +80,7 @@ export class FileHandler {
         return file
     }
 
-    public async validateFile(file: VeloxFile): Promise<{ valid: boolean; error?: string; hash?: string }> {
+    public async validateFile(file: VeloxFile): Promise<FileValidationResult> {
         if (file.size > this.config.MAX_FILE_SIZE) {
             return { valid: false, error: `File size exceeds limit of ${this.config.MAX_FILE_SIZE} bytes` }
         }
@@ -110,7 +117,7 @@ export class FileHandler {
     }
 
 
-    private async processFileInWorker(file: VeloxFile): Promise<{ valid: boolean; error?: string; hash?: string }> {
+    private async processFileInWorker(file: VeloxFile): Promise<FileValidationResult> {
         return new Promise((resolve, reject) => {
             const worker = new Worker(join(__dirname, "../workers/file-worker.js"), {
                 workerData: {
@@ -130,7 +137,11 @@ export class FileHandler {
             worker.on("message", (result: WorkerResponse) => {
                 clearTimeout(timeout)
                 if (result.success) {
-                    resolve({ valid: true, hash: result.data?.hash })
+                    resolve({
+                        valid: true,
+                        hash: result.data?.hash,
+                        scanResult: result.data?.scanResult,
+                    })
                 } else {
                     resolve({ valid: false, error: result.error })
                 }
