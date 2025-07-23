@@ -12,6 +12,7 @@ import { RateLimiter } from "../middleware/rate-limiter"
 import { FileHandler } from "./file-handler"
 import { RequestParser } from "./request-parser"
 import { VeloxRouter } from "./router"
+import { WorkerManager } from "../workers/worker-manager"
 
 export class VeloxServer extends EventEmitter {
     private static instance: VeloxServer
@@ -28,6 +29,7 @@ export class VeloxServer extends EventEmitter {
     private metrics: ServerMetrics
     private isShuttingDown = false
     private requestCounter = 0
+    private workerManager?: WorkerManager
 
     public readonly port: number
     public readonly host: string
@@ -68,6 +70,10 @@ export class VeloxServer extends EventEmitter {
                 this.router.use(middleware)
             })
         }
+
+        if (this.config.WORKER_THREADS > 0) {
+            this.workerManager = new WorkerManager(this.config, this.logger)
+        }
     }
 
     public static getInstance(options?: VeloxServerOptions): VeloxServer {
@@ -75,6 +81,30 @@ export class VeloxServer extends EventEmitter {
             VeloxServer.instance = new VeloxServer(options)
         }
         return VeloxServer.instance
+    }
+
+    public enableLogging(): void {
+        this.logger.enable()
+    }
+
+    public disableLogging(): void {
+        this.logger.disable()
+    }
+
+    public toggleLogging(): boolean {
+        return this.logger.toggle()
+    }
+
+    public setLogLevel(level: "debug" | "info" | "warn" | "error"): void {
+        this.logger.setLevel(level)
+    }
+
+    public setLogFormat(format: "json" | "text"): void {
+        this.logger.setFormat(format)
+    }
+
+    public isLoggingEnabled(): boolean {
+        return this.logger.isLoggerEnabled()
     }
 
     private applyDefaultMiddleware(): void {
@@ -94,7 +124,7 @@ export class VeloxServer extends EventEmitter {
 
         process.on("SIGTERM", shutdown)
         process.on("SIGINT", shutdown)
-        process.on("SIGUSR2", shutdown)
+        process.on("SIGUSR2", shutdown) // For nodemon
     }
 
     public async start(): Promise<void> {
@@ -108,7 +138,7 @@ export class VeloxServer extends EventEmitter {
     private async startCluster(): Promise<void> {
         const numWorkers = this.config.WORKER_THREADS
 
-        this.logger.info(`Starting Velox server in cluster mode with ${numWorkers} workers`)
+        this.logger.info(`Starting VELOX server in cluster mode with ${numWorkers} workers`)
 
         for (let i = 0; i < numWorkers; i++) {
             const worker = cluster.fork()
@@ -153,7 +183,7 @@ export class VeloxServer extends EventEmitter {
 
         return new Promise((resolve, reject) => {
             this.server!.listen(this.port, this.host, () => {
-                this.logger.info(`🚀 Velox Server running on http://${this.host}:${this.port}`)
+                this.logger.info(`🚀 VELOX Server running on http://${this.host}:${this.port}`)
                 this.logger.info(`📁 Upload Directory: ${this.uploadDir}`)
                 this.logger.info(`🔒 Security Level: ${this.isProduction ? "PRODUCTION" : "DEVELOPMENT"}`)
                 this.logger.info(`⚡ Environment: ${process.env.NODE_ENV || "development"}`)
@@ -454,6 +484,30 @@ export class VeloxServer extends EventEmitter {
         })
     }
 
+    public async executeWorkerTask<T = any>(task: {
+        type: "file-validation" | "file-processing" | "image-resize" | "data-processing"
+        data: any
+        timeout?: number
+    }): Promise<T> {
+        if (!this.workerManager) {
+            throw new Error("Worker threads devre dışı")
+        }
+
+        const taskId = Date.now().toString() + Math.random().toString(36).substr(2, 9)
+        return this.workerManager.executeTask({
+            id: taskId,
+            ...task,
+        })
+    }
+
+    public getWorkerStats() {
+        return this.workerManager?.getStats() || null
+    }
+
+    public async checkWorkerHealth(): Promise<boolean> {
+        return this.workerManager?.healthCheck() || false
+    }
+
     public get(
         path: string,
         handler: Parameters<VeloxRouter["get"]>[1],
@@ -538,8 +592,12 @@ export class VeloxServer extends EventEmitter {
             this.rateLimiter.destroy()
             this.fileHandler.destroy()
 
+            if (this.workerManager) {
+                await this.workerManager.shutdown()
+            }
+
             this.logger.info("✅ Resources cleaned up")
-            this.logger.info("Velox Server shutdown complete")
+            this.logger.info("👋 VELOX Server shutdown complete")
 
             process.exit(0)
         } catch (error) {
@@ -552,3 +610,5 @@ export class VeloxServer extends EventEmitter {
         await this.gracefulShutdown()
     }
 }
+
+export type { VeloxServerOptions }
