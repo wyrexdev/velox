@@ -102,12 +102,13 @@ export class FileHandler {
         return { valid: true }
     }
 
-    private validateFileSignature(data: Buffer, signatures: number[][]): boolean {
-        return signatures.some((signature) => {
-            if (data.length < signature.length) return false
-            return signature.every((byte, index) => data[index] === byte)
+    private validateFileSignature(data: Buffer, signatures: readonly (readonly number[])[]): boolean {
+        return signatures.some((sig) => {
+            if (data.length < sig.length) return false
+            return data.subarray(0, sig.length).equals(Buffer.from(sig))
         })
     }
+
 
     private async processFileInWorker(file: VeloxFile): Promise<{ valid: boolean; error?: string; hash?: string }> {
         return new Promise((resolve, reject) => {
