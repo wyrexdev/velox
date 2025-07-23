@@ -5,11 +5,46 @@ import { join } from "node:path"
 export class VeloxLogger {
     private logDir: string
     private config: SecurityConfig["LOGGING"]
+    private isEnabled: boolean
 
     constructor(config: SecurityConfig["LOGGING"], logDir = "./logs") {
         this.config = config
         this.logDir = logDir
+        this.isEnabled = config.ENABLED
         this.ensureLogDir()
+    }
+
+    public enable(): void {
+        this.isEnabled = true
+        this.info("Logger etkinleştirildi")
+    }
+
+    public disable(): void {
+        this.info("Logger devre dışı bırakılıyor")
+        this.isEnabled = false
+    }
+
+    public toggle(): boolean {
+        if (this.isEnabled) {
+            this.disable()
+        } else {
+            this.enable()
+        }
+        return this.isEnabled
+    }
+
+    public isLoggerEnabled(): boolean {
+        return this.isEnabled
+    }
+
+    public setLevel(level: "debug" | "info" | "warn" | "error"): void {
+        this.config.LEVEL = level
+        this.info(`Logger seviyesi ${level} olarak ayarlandı`)
+    }
+
+    public setFormat(format: "json" | "text"): void {
+        this.config.FORMAT = format
+        this.info(`Logger formatı ${format} olarak ayarlandı`)
     }
 
     private ensureLogDir(): void {
@@ -35,7 +70,7 @@ export class VeloxLogger {
     }
 
     public logRequest(entry: LogEntry): void {
-        if (!this.config.ENABLED) return
+        if (!this.isEnabled) return
 
         if (this.config.FORMAT === "json") {
             this.logJson(entry)
@@ -122,24 +157,28 @@ export class VeloxLogger {
     }
 
     public debug(message: string, meta?: any): void {
+        if (!this.isEnabled) return
         if (this.config.LEVEL === "debug") {
             this.log("debug", message, meta)
         }
     }
 
     public info(message: string, meta?: any): void {
+        if (!this.isEnabled) return
         if (["debug", "info"].includes(this.config.LEVEL)) {
             this.log("info", message, meta)
         }
     }
 
     public warn(message: string, meta?: any): void {
+        if (!this.isEnabled) return
         if (["debug", "info", "warn"].includes(this.config.LEVEL)) {
             this.log("warn", message, meta)
         }
     }
 
     public error(message: string, meta?: any): void {
+        if (!this.isEnabled) return
         this.log("error", message, meta)
     }
 
