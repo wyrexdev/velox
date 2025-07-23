@@ -6,7 +6,7 @@ import { Worker } from "node:worker_threads"
 import { pipeline } from "node:stream/promises"
 import { Readable } from "node:stream"
 import { FILE_SIGNATURES } from "@/config/security"
-import type { InputSanitizer } from "@/utils/sanitizer"
+import { InputSanitizer } from "@/utils/sanitizer"
 import { v4 as uuidv4 } from "uuid"
 
 export class FileHandler {
