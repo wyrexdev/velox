@@ -166,7 +166,7 @@ export interface LogEntry {
 }
 
 export interface WorkerMessage {
-    type: "file-validation" | "file-processing" | "shutdown" | "health-check"
+    type: "file-validation" | "file-processing" | "image-resize" | "data-processing" | "shutdown" | "health-check"
     data?: any
     requestId?: string
 }
@@ -207,4 +207,11 @@ export interface VeloxServerOptions {
     enableMetrics?: boolean
     enableHealthCheck?: boolean
     customMiddleware?: VeloxMiddleware[]
+}
+
+export interface WorkerTask {
+    id: string
+    type: "file-validation" | "file-processing" | "image-resize" | "data-processing"
+    data: any
+    timeout?: number
 }
