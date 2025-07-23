@@ -24,14 +24,12 @@ export class StreamManager {
     private createTransforms(req: Request): Transform[] {
         const transforms: Transform[] = [];
 
-        // Compression
         if (req.headers['accept-encoding']?.includes('br')) {
             transforms.push(createBrotliCompress());
         } else if (req.headers['accept-encoding']?.includes('gzip')) {
             transforms.push(createGzip());
         }
 
-        // Encryption
         if (req.url?.startsWith('/secure')) {
             transforms.push(this.createEncryptor());
         }
