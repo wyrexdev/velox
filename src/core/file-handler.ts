@@ -1,12 +1,12 @@
-import type { VeloxFile, FileJSON, SecurityConfig, WorkerResponse } from "@/types"
+import type { VeloxFile, FileJSON, SecurityConfig, WorkerResponse } from "../types"
 import { createWriteStream, existsSync, mkdirSync, createReadStream } from "node:fs"
 import { join, parse } from "node:path"
 import { createHash } from "node:crypto"
 import { Worker } from "node:worker_threads"
 import { pipeline } from "node:stream/promises"
 import { Readable } from "node:stream"
-import { FILE_SIGNATURES } from "@/config/security"
-import { InputSanitizer } from "@/utils/sanitizer"
+import { FILE_SIGNATURES } from "../config/security"
+import { InputSanitizer } from "../utils/sanitizer"
 import { v4 as uuidv4 } from "uuid"
 
 export type FileValidationResult = {

@@ -1,4 +1,4 @@
-import type { VeloxRequest, VeloxMiddleware, RateLimitInfo, SecurityConfig } from "@/types"
+import type { VeloxRequest, VeloxMiddleware, RateLimitInfo, SecurityConfig } from "../types"
 import type { ServerResponse } from "node:http"
 
 export class RateLimiter {

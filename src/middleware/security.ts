@@ -1,4 +1,4 @@
-import type { VeloxRequest, VeloxMiddleware, SecurityConfig } from "@/types"
+import type { VeloxRequest, VeloxMiddleware, SecurityConfig } from "../types"
 import type { ServerResponse } from "node:http"
 import { SECURITY_HEADERS } from "@/config/security"
 

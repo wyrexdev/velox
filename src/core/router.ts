@@ -1,6 +1,6 @@
-import type { VeloxRequest, VeloxHandler, VeloxMiddleware, RouteMap, RouteCache, RouteInfo } from "@/types"
+import type { VeloxRequest, VeloxHandler, VeloxMiddleware, RouteMap, RouteCache, RouteInfo } from "../types"
 import type { ServerResponse } from "node:http"
-import { InputSanitizer } from "@/utils/sanitizer"
+import { InputSanitizer } from "../utils/sanitizer"
 
 export class VeloxRouter {
     public routes: {

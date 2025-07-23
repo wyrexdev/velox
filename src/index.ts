@@ -5,17 +5,17 @@
  * @license MIT
  */
 
-import { VeloxServer } from "@/core/server"
-import { VeloxServerOptions } from "@/types"
-import { VeloxRouter } from "@/core/router"
-import { FileHandler } from "@/core/file-handler"
-import { RequestParser } from "@/core/request-parser"
-import { VeloxLogger } from "@/utils/logger"
-import { InputSanitizer } from "@/utils/sanitizer"
-import { CompressionManager } from "@/utils/compression"
-import { SecurityMiddleware } from "@/middleware/security"
-import { RateLimiter } from "@/middleware/rate-limiter"
-import { DEFAULT_SECURITY_CONFIG, SECURITY_HEADERS, FILE_SIGNATURES } from "@/config/security"
+import { VeloxServer } from "./core/server"
+import { VeloxServerOptions } from "./types"
+import { VeloxRouter } from "./core/router"
+import { FileHandler } from "./core/file-handler"
+import { RequestParser } from "./core/request-parser"
+import { VeloxLogger } from "./utils/logger"
+import { InputSanitizer } from "./utils/sanitizer"
+import { CompressionManager } from "./utils/compression"
+import { SecurityMiddleware } from "./middleware/security"
+import { RateLimiter } from "./middleware/rate-limiter"
+import { DEFAULT_SECURITY_CONFIG, SECURITY_HEADERS, FILE_SIGNATURES } from "./config/security"
 import type {
     VeloxRequest,
     VeloxHandler,
@@ -35,7 +35,7 @@ import type {
     WorkerResponse,
     ServerMetrics,
     FileJSON,
-} from "@/types"
+} from "./types"
 
 export { VeloxServer }
 export { VeloxRouter }

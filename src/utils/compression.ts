@@ -1,6 +1,6 @@
 import { createGzip, createBrotliCompress, createDeflate } from "node:zlib"
 import type { Transform } from "node:stream"
-import type { SecurityConfig } from "@/types"
+import type { SecurityConfig } from "../types"
 
 export class CompressionManager {
     private config: SecurityConfig["COMPRESSION"]

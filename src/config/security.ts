@@ -1,4 +1,4 @@
-import { SecurityConfig } from '@/types/index';
+import { SecurityConfig } from '../types/index';
 import { cpus } from 'os';
 
 export const DEFAULT_SECURITY_CONFIG: SecurityConfig = {

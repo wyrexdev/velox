@@ -1,4 +1,4 @@
-import type { LogEntry, SecurityConfig } from "@/types"
+import type { LogEntry, SecurityConfig } from "../types"
 import { appendFileSync, existsSync, mkdirSync } from "node:fs"
 import { join } from "node:path"
 

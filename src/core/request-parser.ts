@@ -1,6 +1,6 @@
-import type { VeloxRequest, RequestBody, SecurityConfig } from "@/types"
+import type { VeloxRequest, RequestBody, SecurityConfig } from "../types"
 import type { FileHandler } from "./file-handler"
-import { InputSanitizer } from "@/utils/sanitizer"
+import { InputSanitizer } from "../utils/sanitizer"
 
 export class RequestParser {
     private fileHandler: FileHandler
