@@ -5,12 +5,9 @@ interface CompiledRoute {
     middleware: VeloxMiddleware[]
     paramExtractor?: (path: string) => Record<string, string> | null
     staticMatch?: boolean
-    params?: Record<string, string> // Add this for storing extracted params
+    params?: Record<string, string>
 }
 
-/**
- * Ultra-fast router with pre-compiled routes and radix tree
- */
 export class FastRouter {
     private staticRoutes = new Map<string, Map<string, CompiledRoute>>()
     private dynamicRoutes = new Map<string, CompiledRoute[]>()
@@ -24,7 +21,6 @@ export class FastRouter {
     public addRoute(method: string, path: string, handler: VeloxHandler, middleware: VeloxMiddleware[] = []): void {
         method = method.toUpperCase()
 
-        // Apply prefix if set
         if (this.prefix) {
             path = this.prefix + path
         }
@@ -35,11 +31,9 @@ export class FastRouter {
         }
 
         if (path.includes(":") || path.includes("*")) {
-            // Dynamic route
             const compiled = this.compileDynamicRoute(path, handler, middleware)
             this.dynamicRoutes.get(method)!.push(compiled)
         } else {
-            // Static route - fastest lookup
             this.staticRoutes.get(method)!.set(path, {
                 handler,
                 middleware,
@@ -51,13 +45,11 @@ export class FastRouter {
     public findRoute(method: string, path: string): (CompiledRoute & { params?: Record<string, string> }) | null {
         method = method.toUpperCase()
 
-        // Cache lookup first
         const cacheKey = `${method}:${path}`
         if (this.routeCache.has(cacheKey)) {
             return this.routeCache.get(cacheKey)!
         }
 
-        // Static route lookup (fastest)
         const staticRoutes = this.staticRoutes.get(method)
         if (staticRoutes?.has(path)) {
             const route = staticRoutes.get(path)!
@@ -65,7 +57,6 @@ export class FastRouter {
             return route
         }
 
-        // Dynamic route lookup
         const dynamicRoutes = this.dynamicRoutes.get(method)
         if (dynamicRoutes) {
             for (const route of dynamicRoutes) {
@@ -124,7 +115,6 @@ export class FastRouter {
 
     private cacheRoute(key: string, route: CompiledRoute): void {
         if (this.routeCache.size < 10000) {
-            // Limit cache size
             this.routeCache.set(key, route)
         }
     }
