@@ -1,0 +1,17 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "target": "ES2020",
+        "module": "CommonJS",
+        "outDir": "./dist",
+        "declaration": false,
+        "declarationMap": false,
+        "sourceMap": true
+    },
+    "exclude": [
+        "**/*.test.ts",
+        "**/*.spec.ts",
+        "examples/**/*",
+        "benchmarks/**/*"
+    ]
+}
