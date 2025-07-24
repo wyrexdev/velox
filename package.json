@@ -1,6 +1,6 @@
 {
   "name": "velox-server",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Ultra Modern, Ultra Modular, Ultra Fast, Ultra Secure HTTP Server with Streaming, Clustering, and Worker Thread Support",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
