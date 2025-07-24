@@ -467,6 +467,14 @@ export class UltraFastServer extends EventEmitter {
         this.metrics.uptime = process.uptime()
     }
 
+    public sendFastJSON(res: ServerResponse, status: number, data: any): void {
+        const jsonBuffer = Buffer.from(FastJSON.stringify(data), "utf8")
+        const headerBuffer = FastHeaders.buildResponseHeaders(status, jsonBuffer.length)
+
+        res.socket?.write(Buffer.concat([headerBuffer, jsonBuffer]))
+        res.end()
+    }
+
     public sendPrebuiltResponse(res: ServerResponse, status: number, bodyBuffer: Buffer): void {
         const headerBuffer = FastHeaders.buildResponseHeaders(status, bodyBuffer.length)
         res.socket?.write(Buffer.concat([headerBuffer, bodyBuffer]))
@@ -475,9 +483,23 @@ export class UltraFastServer extends EventEmitter {
 
     public sendJson(res: ServerResponse, status: number, data: any): void {
         const json = this.isProduction ? JSON.stringify(data) : JSON.stringify(data, null, 2)
+        const buffer = Buffer.from(json, "utf8")
+
+        res.setHeader("Content-Type", "application/json; charset=utf-8")
+        res.setHeader("Content-Length", buffer.length)
+
+        const acceptEncoding = res.req.headers["accept-encoding"] || ""
+        const compressionStream = this.compression.getCompressionStream(acceptEncoding)
+
+        if (compressionStream && this.compression.shouldCompress(buffer.length, "application/json")) {
+            const encoding = this.compression.getCompressionEncoding(acceptEncoding)
+            if (encoding) {
+                res.setHeader("Content-Encoding", encoding)
+            }
+        }
 
         res.writeHead(status)
-        res.end(json)
+        res.end(buffer)
     }
 
     public sendFile(
