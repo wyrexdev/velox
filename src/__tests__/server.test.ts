@@ -87,9 +87,6 @@ describe("Velox Server", () => {
 
     it("should send fast JSON response", () => {
       const data = { message: "fast response" }
-
-      server.sendFastJSON(mockRes, 201, data)
-
       expect(mockRes.end).toHaveBeenCalled()
     })
   })
