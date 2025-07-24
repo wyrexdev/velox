@@ -1,6 +1,6 @@
 {
   "name": "velox-server",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Ultra Modern, Ultra Modular, Ultra Fast, Ultra Secure HTTP Server with Streaming, Clustering, and Worker Thread Support",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -67,15 +67,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/velox/velox-server.git"
+    "url": "https://github.com/wyrexdev/velox.git"
   },
   "bugs": {
-    "url": "https://github.com/velox/velox-server/issues"
-  },
-  "homepage": "https://velox-server.dev",
-  "funding": {
-    "type": "opencollective",
-    "url": "https://opencollective.com/velox-server"
+    "url": "https://github.com/wyrexdev/velox/issues"
   },
   "dependencies": {
     "@jest/expect": "^30.0.5",
